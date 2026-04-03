@@ -1,0 +1,22 @@
+<UserControl x:Class="DocuDesk.Viewer.ViewerHostControl"
+             xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
+             xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
+             xmlns:d="http://schemas.microsoft.com/expression/blend/2008"
+             xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
+             xmlns:wv2="clr-namespace:Microsoft.Web.WebView2.Wpf;assembly=Microsoft.Web.WebView2.Wpf"
+             mc:Ignorable="d">
+    <Grid>
+        <wv2:WebView2 x:Name="PART_WebView" />
+        <Border x:Name="PART_Fallback"
+                Visibility="Collapsed"
+                Background="#FFF8E1"
+                BorderBrush="#E6C65C"
+                BorderThickness="1"
+                Padding="12">
+            <TextBlock x:Name="PART_FallbackText"
+                       TextWrapping="Wrap"
+                       Foreground="#5D4037"
+                       Text="Viewer konnte nicht initialisiert werden." />
+        </Border>
+    </Grid>
+</UserControl>
