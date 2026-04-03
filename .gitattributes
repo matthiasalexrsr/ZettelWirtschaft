@@ -1,0 +1,14 @@
+# Keep line endings consistent for source files
+* text=auto eol=lf
+
+# Archives and packaged assets are binary and should not be merged line-by-line
+*.zip binary
+*.db binary
+*.png binary
+*.jpg binary
+*.jpeg binary
+*.pdf binary
+
+# Unpacked recovery snapshots are generated import artifacts.
+# Disable line-based merges to prevent noisy conflict blocks.
+unpacked/** -merge
