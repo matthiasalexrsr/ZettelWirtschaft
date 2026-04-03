@@ -1,0 +1,27 @@
+<!doctype html>
+<html lang="de">
+<head>
+  <meta charset="utf-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1" />
+  <title>DocuDesk Viewer</title>
+  <link rel="stylesheet" href="viewer.css" />
+</head>
+<body>
+  <div id="app">
+    <div id="toolbar">
+      <div>
+        <div id="title">Kein Dokument ausgewählt</div>
+        <div id="meta"></div>
+      </div>
+      <div id="toolbar-actions">
+        <button id="copy-selection-btn" type="button">Auswahl kopieren</button>
+        <button id="copy-all-btn" type="button">Alles kopieren</button>
+        <button id="annotation-rect-btn" type="button">Rechteck markieren</button>
+        <div id="status"></div>
+      </div>
+    </div>
+    <div id="content"></div>
+  </div>
+  <script src="viewer.js"></script>
+</body>
+</html>
