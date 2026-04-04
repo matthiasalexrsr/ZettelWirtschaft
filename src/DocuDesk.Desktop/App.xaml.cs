@@ -34,7 +34,7 @@ public partial class App : Application
 
             Directory.CreateDirectory(settings.AppDataRoot);
             Directory.CreateDirectory(settings.RepositoryRoot);
-            Directory.CreateDirectory(Path.GetDirectoryName(settings.DatabasePath)!);
+            EnsureParentDirectoryExists(settings.DatabasePath);
             Directory.CreateDirectory(settings.BackupsPath);
             Directory.CreateDirectory(settings.LogsPath);
             Directory.CreateDirectory(settings.CacheRoot);
@@ -66,6 +66,15 @@ public partial class App : Application
         {
             LogFatalException(ex, "OnStartup");
             Shutdown(1);
+        }
+    }
+
+    private static void EnsureParentDirectoryExists(string filePath)
+    {
+        var directory = Path.GetDirectoryName(filePath);
+        if (!string.IsNullOrWhiteSpace(directory))
+        {
+            Directory.CreateDirectory(directory);
         }
     }
 

@@ -11,7 +11,16 @@ public sealed class JsonSettingsStore : ISettingsStore
     public JsonSettingsStore(string settingsFilePath)
     {
         _settingsFilePath = settingsFilePath;
-        Directory.CreateDirectory(Path.GetDirectoryName(settingsFilePath)!);
+        EnsureParentDirectoryExists(settingsFilePath);
+    }
+
+    private static void EnsureParentDirectoryExists(string filePath)
+    {
+        var directory = Path.GetDirectoryName(filePath);
+        if (!string.IsNullOrWhiteSpace(directory))
+        {
+            Directory.CreateDirectory(directory);
+        }
     }
 
     public async Task<AppSettings> LoadAsync(CancellationToken cancellationToken = default)
