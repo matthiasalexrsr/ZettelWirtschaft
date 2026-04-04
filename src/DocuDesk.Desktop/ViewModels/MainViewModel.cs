@@ -99,9 +99,21 @@ public sealed class MainViewModel : ObservableObject
 
     private async Task InitializeAsync()
     {
-        await ProcessJobsAsync();
-        await LoadDocumentsAsync();
-        await LoadJobsAsync();
+        try
+        {
+            await ProcessJobsAsync();
+            await LoadDocumentsAsync();
+            await LoadJobsAsync();
+        }
+        catch (Exception ex)
+        {
+            System.Windows.Application.Current.Dispatcher.Invoke(() =>
+                MessageBox.Show(
+                    $"Initialdaten konnten nicht geladen werden:\n\n{ex.Message}",
+                    "DocuDesk",
+                    MessageBoxButton.OK,
+                    MessageBoxImage.Warning));
+        }
     }
 
     private async Task LoadDocumentsAsync()
