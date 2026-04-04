@@ -1,7 +1,6 @@
 using System.IO;
 using System.Windows;
 using System.Windows.Threading;
-using DocuDesk.Application;
 using DocuDesk.Application.Abstractions.Persistence;
 using DocuDesk.Application.Interfaces;
 using DocuDesk.Application.Services;
