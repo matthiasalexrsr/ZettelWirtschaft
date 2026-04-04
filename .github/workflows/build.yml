@@ -1,0 +1,27 @@
+name: Build Portable App
+
+on:
+  push:
+    branches: [main, 'claude/**']
+  workflow_dispatch:
+
+jobs:
+  build:
+    runs-on: windows-latest
+    steps:
+      - uses: actions/checkout@v4
+
+      - name: Setup .NET 10
+        uses: actions/setup-dotnet@v4
+        with:
+          dotnet-version: '10.0.x'
+
+      - name: Publish portable app
+        run: dotnet publish src/DocuDesk.Desktop/DocuDesk.Desktop.csproj -c Release -o publish
+
+      - name: Upload artifact
+        uses: actions/upload-artifact@v4
+        with:
+          name: DocuDesk-win-x64
+          path: publish/
+          retention-days: 90
