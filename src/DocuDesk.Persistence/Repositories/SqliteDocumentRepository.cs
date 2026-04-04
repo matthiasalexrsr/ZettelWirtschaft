@@ -214,7 +214,7 @@ ON CONFLICT(document_id) DO UPDATE SET
     public async Task ReplacePagesAsync(Guid documentId, IReadOnlyList<Page> pages, CancellationToken cancellationToken = default)
     {
         await using var connection = _connectionFactory.CreateOpenConnection();
-        await using var transaction = await connection.BeginTransactionAsync(cancellationToken);
+        await using var transaction = (SqliteTransaction)await connection.BeginTransactionAsync(cancellationToken);
 
         await using (var deleteCommand = connection.CreateCommand())
         {
@@ -246,7 +246,7 @@ VALUES ($id, $document_id, $page_number, $width_px, $height_px, $rotation_deg);"
     public async Task ReplaceOcrBlocksAsync(Guid documentId, IReadOnlyList<OcrBlock> blocks, CancellationToken cancellationToken = default)
     {
         await using var connection = _connectionFactory.CreateOpenConnection();
-        await using var transaction = await connection.BeginTransactionAsync(cancellationToken);
+        await using var transaction = (SqliteTransaction)await connection.BeginTransactionAsync(cancellationToken);
 
         await using (var deleteCommand = connection.CreateCommand())
         {

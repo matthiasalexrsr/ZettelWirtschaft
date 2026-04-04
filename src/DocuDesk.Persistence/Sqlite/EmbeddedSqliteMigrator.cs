@@ -1,4 +1,5 @@
 using DocuDesk.Application.Abstractions.Persistence;
+using Microsoft.Data.Sqlite;
 using System.Reflection;
 
 namespace DocuDesk.Persistence.Sqlite;
@@ -60,7 +61,7 @@ public sealed class EmbeddedSqliteMigrator : IDatabaseMigrator
             using var reader = new StreamReader(stream);
             var sql = await reader.ReadToEndAsync(ct);
 
-            await using var tx = await con.BeginTransactionAsync(ct);
+            await using var tx = (SqliteTransaction)await con.BeginTransactionAsync(ct);
 
             await using (var execCmd = con.CreateCommand())
             {

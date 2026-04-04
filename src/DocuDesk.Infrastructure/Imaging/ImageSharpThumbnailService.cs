@@ -1,6 +1,7 @@
 using DocuDesk.Application;
 using DocuDesk.Application.Interfaces;
 using SixLabors.ImageSharp;
+using SixLabors.ImageSharp.Drawing.Processing;
 using SixLabors.ImageSharp.Formats.Png;
 using SixLabors.ImageSharp.PixelFormats;
 using SixLabors.ImageSharp.Processing;
