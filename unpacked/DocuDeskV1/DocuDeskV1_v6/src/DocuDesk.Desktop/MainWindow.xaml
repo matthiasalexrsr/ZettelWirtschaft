@@ -6,51 +6,133 @@
         xmlns:viewer="clr-namespace:DocuDesk.Viewer;assembly=DocuDesk.Viewer"
         mc:Ignorable="d"
         Title="DocuDesk"
-        Height="900"
-        Width="1500"
+        Height="920"
+        Width="1520"
+        MinHeight="760"
+        MinWidth="1260"
         WindowStartupLocation="CenterScreen"
-        Background="#F5F7FA">
+        Background="#F3F6FB">
+    <Window.Resources>
+        <SolidColorBrush x:Key="SidebarBackground" Color="#111827" />
+        <SolidColorBrush x:Key="SidebarForeground" Color="#D1D5DB" />
+        <SolidColorBrush x:Key="CardBackground" Color="#FFFFFFFF" />
+        <SolidColorBrush x:Key="CardBorder" Color="#E5EAF2" />
+        <CornerRadius x:Key="CardCornerRadius">12</CornerRadius>
+
+        <Style x:Key="NavButtonStyle" TargetType="Button">
+            <Setter Property="Foreground" Value="{StaticResource SidebarForeground}" />
+            <Setter Property="Background" Value="Transparent" />
+            <Setter Property="BorderBrush" Value="Transparent" />
+            <Setter Property="Padding" Value="12,10" />
+            <Setter Property="Margin" Value="0,0,0,6" />
+            <Setter Property="HorizontalContentAlignment" Value="Left" />
+            <Setter Property="FontSize" Value="14" />
+            <Setter Property="Cursor" Value="Hand" />
+            <Style.Triggers>
+                <Trigger Property="IsMouseOver" Value="True">
+                    <Setter Property="Background" Value="#1F2937" />
+                    <Setter Property="Foreground" Value="White" />
+                </Trigger>
+            </Style.Triggers>
+        </Style>
+
+        <Style x:Key="PrimaryButtonStyle" TargetType="Button">
+            <Setter Property="Background" Value="#2563EB" />
+            <Setter Property="Foreground" Value="White" />
+            <Setter Property="BorderBrush" Value="#1D4ED8" />
+            <Setter Property="Padding" Value="14,8" />
+            <Setter Property="Margin" Value="0,0,10,0" />
+            <Setter Property="Cursor" Value="Hand" />
+            <Setter Property="FontWeight" Value="SemiBold" />
+            <Style.Triggers>
+                <Trigger Property="IsEnabled" Value="False">
+                    <Setter Property="Opacity" Value="0.6" />
+                </Trigger>
+            </Style.Triggers>
+        </Style>
+
+        <Style x:Key="SecondaryButtonStyle" TargetType="Button" BasedOn="{StaticResource PrimaryButtonStyle}">
+            <Setter Property="Background" Value="White" />
+            <Setter Property="Foreground" Value="#1F2937" />
+            <Setter Property="BorderBrush" Value="#D1D5DB" />
+        </Style>
+    </Window.Resources>
+
     <Grid>
         <Grid.ColumnDefinitions>
-            <ColumnDefinition Width="250" />
+            <ColumnDefinition Width="280" />
             <ColumnDefinition Width="*" />
         </Grid.ColumnDefinitions>
 
-        <Border Grid.Column="0" Background="#1F2937">
-            <StackPanel Margin="20">
-                <TextBlock Text="DocuDesk" Foreground="White" FontSize="28" FontWeight="Bold" />
-                <TextBlock Text="Dokumentenverwaltung" Foreground="#D1D5DB" Margin="0,4,0,24" />
+        <Border Grid.Column="0" Background="{StaticResource SidebarBackground}">
+            <Grid Margin="20">
+                <Grid.RowDefinitions>
+                    <RowDefinition Height="Auto" />
+                    <RowDefinition Height="*" />
+                    <RowDefinition Height="Auto" />
+                </Grid.RowDefinitions>
 
-                <Button Content="Inbox" Margin="0,0,0,10" Padding="12,8" />
-                <Button Content="Alle Dokumente" Margin="0,0,0,10" Padding="12,8" />
-                <Button Content="Suche" Margin="0,0,0,10" Padding="12,8" />
-                <Button Content="Kategorien" Margin="0,0,0,10" Padding="12,8" />
-                <Button Content="Jobs &amp; Diagnose" Margin="0,0,0,10" Padding="12,8" />
-                <Button Content="Einstellungen" Margin="0,0,0,10" Padding="12,8" />
-            </StackPanel>
+                <StackPanel>
+                    <TextBlock Text="DocuDesk" Foreground="White" FontSize="30" FontWeight="Bold" />
+                    <TextBlock Text="WPF Document Workspace" Foreground="#9CA3AF" Margin="0,4,0,24" />
+
+                    <Button Style="{StaticResource NavButtonStyle}" Content="📥  Inbox" />
+                    <Button Style="{StaticResource NavButtonStyle}" Content="📄  Alle Dokumente" />
+                    <Button Style="{StaticResource NavButtonStyle}" Content="🔎  Suche" />
+                    <Button Style="{StaticResource NavButtonStyle}" Content="🏷️  Kategorien" />
+                    <Button Style="{StaticResource NavButtonStyle}" Content="🧪  Jobs &amp; Diagnose" />
+                    <Button Style="{StaticResource NavButtonStyle}" Content="⚙️  Einstellungen" />
+                </StackPanel>
+
+                <Border Grid.Row="2"
+                        Background="#0B1220"
+                        BorderBrush="#1F2937"
+                        BorderThickness="1"
+                        Padding="12"
+                        CornerRadius="8">
+                    <TextBlock Foreground="#9CA3AF"
+                               TextWrapping="Wrap"
+                               FontSize="12"
+                               Text="Hinweis: Diese Oberfläche nutzt den bestehenden MainViewModel-Flow ohne Command-/Binding-Änderungen." />
+                </Border>
+            </Grid>
         </Border>
 
-        <Grid Grid.Column="1" Margin="20">
+        <Grid Grid.Column="1" Margin="22">
             <Grid.RowDefinitions>
                 <RowDefinition Height="Auto" />
                 <RowDefinition Height="*" />
-                <RowDefinition Height="280" />
+                <RowDefinition Height="270" />
             </Grid.RowDefinitions>
 
-            <Border Grid.Row="0" Background="White" CornerRadius="8" Padding="16">
-                <DockPanel LastChildFill="False">
-                    <StackPanel Orientation="Horizontal" DockPanel.Dock="Left">
-                        <TextBox Width="420" Height="36" Margin="0,0,12,0" VerticalContentAlignment="Center"
+            <Border Grid.Row="0"
+                    Background="{StaticResource CardBackground}"
+                    BorderBrush="{StaticResource CardBorder}"
+                    BorderThickness="1"
+                    CornerRadius="{StaticResource CardCornerRadius}"
+                    Padding="16">
+                <Grid>
+                    <Grid.ColumnDefinitions>
+                        <ColumnDefinition Width="*" />
+                        <ColumnDefinition Width="Auto" />
+                    </Grid.ColumnDefinitions>
+
+                    <StackPanel Orientation="Horizontal" VerticalAlignment="Center">
+                        <TextBox Width="450"
+                                 Height="38"
+                                 VerticalContentAlignment="Center"
+                                 Margin="0,0,12,0"
                                  Text="{Binding SearchText, UpdateSourceTrigger=PropertyChanged}" />
-                        <Button Padding="18,8" Content="Suchen" Command="{Binding SearchCommand}" />
+                        <Button Content="Suchen" Style="{StaticResource PrimaryButtonStyle}" Command="{Binding SearchCommand}" />
                     </StackPanel>
-                    <StackPanel Orientation="Horizontal" DockPanel.Dock="Right">
-                        <Button Padding="14,8" Content="Import" Command="{Binding ImportCommand}" />
-                        <Button Margin="12,0,0,0" Padding="14,8" Content="Jobs verarbeiten" Command="{Binding ProcessJobsCommand}" />
-                        <Button Margin="12,0,0,0" Padding="14,8" Content="Backup" Command="{Binding BackupCommand}" />
-                        <Button Margin="12,0,0,0" Padding="14,8" Content="Mail-Entwurf" Command="{Binding DraftMailCommand}" />
+
+                    <StackPanel Grid.Column="1" Orientation="Horizontal" VerticalAlignment="Center">
+                        <Button Content="Import" Style="{StaticResource SecondaryButtonStyle}" Command="{Binding ImportCommand}" />
+                        <Button Content="Jobs verarbeiten" Style="{StaticResource SecondaryButtonStyle}" Command="{Binding ProcessJobsCommand}" />
+                        <Button Content="Backup" Style="{StaticResource SecondaryButtonStyle}" Command="{Binding BackupCommand}" />
+                        <Button Content="Mail-Entwurf" Style="{StaticResource PrimaryButtonStyle}" Command="{Binding DraftMailCommand}" Margin="0" />
                     </StackPanel>
-                </DockPanel>
+                </Grid>
             </Border>
 
             <Grid Grid.Row="1" Margin="0,16,0,16">
@@ -60,13 +142,19 @@
                     <ColumnDefinition Width="360" />
                 </Grid.ColumnDefinitions>
 
-                <Border Grid.Column="0" Background="White" CornerRadius="8" Padding="12" Margin="0,0,12,0">
+                <Border Grid.Column="0"
+                        Background="{StaticResource CardBackground}"
+                        BorderBrush="{StaticResource CardBorder}"
+                        BorderThickness="1"
+                        CornerRadius="{StaticResource CardCornerRadius}"
+                        Padding="12"
+                        Margin="0,0,12,0">
                     <DockPanel>
                         <TextBlock DockPanel.Dock="Top" FontSize="18" FontWeight="Bold" Text="Dokumente" />
                         <ListBox ItemsSource="{Binding Documents}" SelectedItem="{Binding SelectedDocument}" Margin="0,12,0,0">
                             <ListBox.ItemTemplate>
                                 <DataTemplate>
-                                    <Border Padding="8">
+                                    <Border Padding="8" Margin="0,0,0,2" BorderBrush="#EFF3F8" BorderThickness="0,0,0,1">
                                         <StackPanel>
                                             <TextBlock Text="{Binding Title}" FontWeight="SemiBold" />
                                             <TextBlock Text="{Binding DisplayName}" Foreground="#6B7280" FontSize="12" />
@@ -81,14 +169,29 @@
                     </DockPanel>
                 </Border>
 
-                <Border Grid.Column="1" Background="White" CornerRadius="8" Padding="12" Margin="0,0,12,0">
+                <Border Grid.Column="1"
+                        Background="{StaticResource CardBackground}"
+                        BorderBrush="{StaticResource CardBorder}"
+                        BorderThickness="1"
+                        CornerRadius="{StaticResource CardCornerRadius}"
+                        Padding="12"
+                        Margin="0,0,12,0">
                     <DockPanel>
                         <TextBlock DockPanel.Dock="Top" FontSize="18" FontWeight="Bold" Text="Viewer" />
-                        <viewer:ViewerHostControl x:Name="DocumentViewer" Margin="0,12,0,0" SourcePath="{Binding SelectedDocumentPath}" OverlayJson="{Binding SelectedDocumentOverlayJson}" HighlightQuery="{Binding SearchText}" />
+                        <viewer:ViewerHostControl x:Name="DocumentViewer"
+                                                  Margin="0,12,0,0"
+                                                  SourcePath="{Binding SelectedDocumentPath}"
+                                                  OverlayJson="{Binding SelectedDocumentOverlayJson}"
+                                                  HighlightQuery="{Binding SearchText}" />
                     </DockPanel>
                 </Border>
 
-                <Border Grid.Column="2" Background="White" CornerRadius="8" Padding="12">
+                <Border Grid.Column="2"
+                        Background="{StaticResource CardBackground}"
+                        BorderBrush="{StaticResource CardBorder}"
+                        BorderThickness="1"
+                        CornerRadius="{StaticResource CardCornerRadius}"
+                        Padding="14">
                     <StackPanel>
                         <TextBlock FontSize="18" FontWeight="Bold" Text="Dokumentdetails" />
                         <TextBlock Margin="0,12,0,0" Text="Titel" FontWeight="SemiBold" />
@@ -105,7 +208,12 @@
                 </Border>
             </Grid>
 
-            <Border Grid.Row="2" Background="White" CornerRadius="8" Padding="12">
+            <Border Grid.Row="2"
+                    Background="{StaticResource CardBackground}"
+                    BorderBrush="{StaticResource CardBorder}"
+                    BorderThickness="1"
+                    CornerRadius="{StaticResource CardCornerRadius}"
+                    Padding="12">
                 <DockPanel>
                     <TextBlock DockPanel.Dock="Top" FontSize="18" FontWeight="Bold" Text="Jobs &amp; Diagnose" />
                     <ListBox ItemsSource="{Binding Jobs}" Margin="0,12,0,0">
