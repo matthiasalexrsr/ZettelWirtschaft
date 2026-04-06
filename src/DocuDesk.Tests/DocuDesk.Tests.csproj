@@ -1,6 +1,7 @@
 <Project Sdk="Microsoft.NET.Sdk">
   <PropertyGroup>
-    <TargetFramework>net9.0</TargetFramework>
+    <TargetFramework>net9.0-windows</TargetFramework>
+    <EnableWindowsTargeting>true</EnableWindowsTargeting>
     <ImplicitUsings>enable</ImplicitUsings>
     <Nullable>enable</Nullable>
     <IsPackable>false</IsPackable>
@@ -15,6 +16,9 @@
 
   <ItemGroup>
     <ProjectReference Include="..\DocuDesk.Application\DocuDesk.Application.csproj" />
+    <ProjectReference Include="..\DocuDesk.Desktop\DocuDesk.Desktop.csproj" />
     <ProjectReference Include="..\DocuDesk.Infrastructure\DocuDesk.Infrastructure.csproj" />
+    <ProjectReference Include="..\DocuDesk.Persistence\DocuDesk.Persistence.csproj" />
+    <ProjectReference Include="..\DocuDesk.Worker\DocuDesk.Worker.csproj" />
   </ItemGroup>
 </Project>
