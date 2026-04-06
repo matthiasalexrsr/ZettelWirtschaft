@@ -68,11 +68,19 @@
 
                 <Border Grid.Column="0" Style="{StaticResource CardBorderStyle}" Padding="12" Margin="0,0,12,0">
                     <DockPanel>
-                        <TextBlock DockPanel.Dock="Top" Style="{StaticResource SectionHeaderTextStyle}" Text="Dokumente" />
-                        <ListBox ItemsSource="{Binding Documents}" SelectedItem="{Binding SelectedDocument}" Margin="0,12,0,0">
+                        <StackPanel DockPanel.Dock="Top" Orientation="Horizontal">
+                            <TextBlock Style="{StaticResource SectionHeaderTextStyle}" Text="Dokumente" />
+                            <Border Margin="10,2,0,0" Padding="8,2" CornerRadius="10" Background="#FFEFF6FF">
+                                <TextBlock Text="{Binding Documents.Count, StringFormat={}{0} Treffer}" Foreground="{StaticResource Brush.Primary}" FontSize="12" />
+                            </Border>
+                        </StackPanel>
+                        <ListBox ItemsSource="{Binding Documents}"
+                                 SelectedItem="{Binding SelectedDocument}"
+                                 ItemContainerStyle="{StaticResource DocumentListItemStyle}"
+                                 Margin="0,12,0,0">
                             <ListBox.ItemTemplate>
                                 <DataTemplate>
-                                    <Border Padding="8">
+                                    <Border Padding="10">
                                         <StackPanel>
                                             <TextBlock Text="{Binding Title}" FontWeight="SemiBold" />
                                             <TextBlock Text="{Binding DisplayName}" Foreground="{StaticResource Brush.MutedText}" FontSize="12" />
@@ -95,19 +103,41 @@
                 </Border>
 
                 <Border Grid.Column="2" Style="{StaticResource CardBorderStyle}" Padding="12">
-                    <StackPanel>
+                    <Grid>
+                        <Grid.RowDefinitions>
+                            <RowDefinition Height="Auto" />
+                            <RowDefinition Height="*" />
+                        </Grid.RowDefinitions>
                         <TextBlock Style="{StaticResource SectionHeaderTextStyle}" Text="Dokumentdetails" />
-                        <TextBlock Margin="0,12,0,0" Text="Titel" FontWeight="SemiBold" />
-                        <TextBlock Text="{Binding SelectedDocument.Title}" TextWrapping="Wrap" />
-                        <TextBlock Margin="0,12,0,0" Text="Datei" FontWeight="SemiBold" />
-                        <TextBlock Text="{Binding SelectedDocument.DisplayName}" TextWrapping="Wrap" />
-                        <TextBlock Margin="0,12,0,0" Text="Absender" FontWeight="SemiBold" />
-                        <TextBlock Text="{Binding SelectedDocument.Sender}" TextWrapping="Wrap" />
-                        <TextBlock Margin="0,12,0,0" Text="Dokumenttyp" FontWeight="SemiBold" />
-                        <TextBlock Text="{Binding SelectedDocument.DocumentType}" TextWrapping="Wrap" />
-                        <TextBlock Margin="0,12,0,0" Text="Repository-Pfad" FontWeight="SemiBold" />
-                        <TextBlock Text="{Binding SelectedDocument.RepositoryPath}" TextWrapping="Wrap" />
-                    </StackPanel>
+                        <Grid Grid.Row="1" Margin="0,12,0,0">
+                            <Grid.ColumnDefinitions>
+                                <ColumnDefinition Width="120" />
+                                <ColumnDefinition Width="*" />
+                            </Grid.ColumnDefinitions>
+                            <Grid.RowDefinitions>
+                                <RowDefinition Height="Auto" />
+                                <RowDefinition Height="Auto" />
+                                <RowDefinition Height="Auto" />
+                                <RowDefinition Height="Auto" />
+                                <RowDefinition Height="Auto" />
+                            </Grid.RowDefinitions>
+
+                            <TextBlock Grid.Row="0" Grid.Column="0" Text="Titel" FontWeight="SemiBold" Margin="0,0,8,10" />
+                            <TextBlock Grid.Row="0" Grid.Column="1" Text="{Binding SelectedDocument.Title}" TextWrapping="Wrap" Margin="0,0,0,10" />
+
+                            <TextBlock Grid.Row="1" Grid.Column="0" Text="Datei" FontWeight="SemiBold" Margin="0,0,8,10" />
+                            <TextBlock Grid.Row="1" Grid.Column="1" Text="{Binding SelectedDocument.DisplayName}" TextWrapping="Wrap" Margin="0,0,0,10" />
+
+                            <TextBlock Grid.Row="2" Grid.Column="0" Text="Absender" FontWeight="SemiBold" Margin="0,0,8,10" />
+                            <TextBlock Grid.Row="2" Grid.Column="1" Text="{Binding SelectedDocument.Sender}" TextWrapping="Wrap" Margin="0,0,0,10" />
+
+                            <TextBlock Grid.Row="3" Grid.Column="0" Text="Dokumenttyp" FontWeight="SemiBold" Margin="0,0,8,10" />
+                            <TextBlock Grid.Row="3" Grid.Column="1" Text="{Binding SelectedDocument.DocumentType}" TextWrapping="Wrap" Margin="0,0,0,10" />
+
+                            <TextBlock Grid.Row="4" Grid.Column="0" Text="Repository" FontWeight="SemiBold" Margin="0,0,8,0" />
+                            <TextBlock Grid.Row="4" Grid.Column="1" Text="{Binding SelectedDocument.RepositoryPath}" TextWrapping="Wrap" />
+                        </Grid>
+                    </Grid>
                 </Border>
             </Grid>
 
