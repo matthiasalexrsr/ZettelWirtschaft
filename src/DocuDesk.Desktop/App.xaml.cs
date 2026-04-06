@@ -4,6 +4,7 @@ using System.Windows.Threading;
 using DocuDesk.Application.Abstractions.Persistence;
 using DocuDesk.Application.Interfaces;
 using DocuDesk.Application.Services;
+using DocuDesk.Desktop.Services;
 using DocuDesk.Desktop.ViewModels;
 using DocuDesk.Infrastructure.DependencyInjection;
 using DocuDesk.Infrastructure.Settings;
@@ -50,6 +51,8 @@ public partial class App : Application
             services.AddSingleton<SearchService>();
             services.AddSingleton<DocumentProcessingWorker>();
             services.AddSingleton<JobScheduler>();
+            services.AddSingleton<IFileDialogService, FileDialogService>();
+            services.AddSingleton<IUserNotificationService, UserNotificationService>();
             services.AddSingleton<MainViewModel>();
             services.AddSingleton<MainWindow>();
 
