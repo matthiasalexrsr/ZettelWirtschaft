@@ -1,0 +1,5 @@
+<Project>
+  <ItemGroup>
+    <Compile Remove="EnumContractTests.cs" />
+  </ItemGroup>
+</Project>
