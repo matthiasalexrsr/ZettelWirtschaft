@@ -1,0 +1,9 @@
+{
+  "name": "de.docudesk.host",
+  "description": "DocuDesk Native Messaging Host",
+  "path": "C:\\Program Files\\DocuDesk\\DocuDesk.ThunderbirdHost.exe",
+  "type": "stdio",
+  "allowed_extensions": [
+    "[email protected]"
+  ]
+}
