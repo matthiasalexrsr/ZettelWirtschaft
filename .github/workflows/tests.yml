@@ -1,0 +1,43 @@
+name: Test Suite
+
+on:
+  push:
+    branches: [main, 'claude/**']
+  pull_request:
+    branches: [main]
+  workflow_dispatch:
+
+jobs:
+  test:
+    runs-on: windows-latest
+
+    steps:
+      - name: Checkout
+        uses: actions/checkout@v4
+
+      - name: Setup .NET 9
+        uses: actions/setup-dotnet@v4
+        with:
+          dotnet-version: '9.0.x'
+
+      - name: Restore solution
+        run: dotnet restore src/DocuDesk.sln
+
+      - name: Restore test project
+        run: dotnet restore tests/DocuDesk.Domain.Tests/DocuDesk.Domain.Tests.csproj
+
+      - name: Build domain tests
+        run: dotnet build tests/DocuDesk.Domain.Tests/DocuDesk.Domain.Tests.csproj --configuration Release --no-restore
+
+      - name: Run domain tests with coverage
+        run: dotnet test tests/DocuDesk.Domain.Tests/DocuDesk.Domain.Tests.csproj --configuration Release --no-build --settings tests/DocuDesk.runsettings --collect:"XPlat Code Coverage"
+
+      - name: Upload test results
+        if: always()
+        uses: actions/upload-artifact@v4
+        with:
+          name: DocuDesk-TestResults
+          path: |
+            tests/DocuDesk.Domain.Tests/TestResults/**
+            TestResults/**
+          retention-days: 14
