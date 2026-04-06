@@ -46,6 +46,19 @@ public sealed class MainViewModelCommandTests
     }
 
     [Fact]
+    public async Task ImportCommand_DoesNothing_WhenNoFilesAreSelected()
+    {
+        var harness = new MainViewModelHarness();
+        harness.FileDialog.FilesToReturn = Array.Empty<string>();
+        var vm = harness.CreateViewModel();
+
+        vm.ImportCommand.Execute(null);
+        await Task.Delay(100);
+
+        Assert.Empty(harness.ImportService.ImportedFiles);
+    }
+
+    [Fact]
     public async Task BackupCommand_CallsBackupService_AndShowsInfoMessage()
     {
         var harness = new MainViewModelHarness();
@@ -76,6 +89,38 @@ public sealed class MainViewModelCommandTests
         Assert.NotNull(harness.MailAdapter.LastRequest);
         Assert.Equal("Dokument: Contract", harness.MailAdapter.LastRequest!.Subject);
         Assert.Contains("repo/contract.pdf", harness.MailAdapter.LastRequest.Attachments);
+    }
+
+    [Fact]
+    public async Task DraftMailCommand_ShowsWarning_WhenMailAdapterFails()
+    {
+        var harness = new MainViewModelHarness();
+        harness.MailAdapter.Result = new MailDraftResult { Success = false, ErrorText = "SMTP offline" };
+        var vm = harness.CreateViewModel();
+        vm.SelectedDocument = new DocumentListItemDto
+        {
+            Id = Guid.NewGuid(),
+            Title = "Contract",
+            RepositoryPath = "repo/contract.pdf"
+        };
+
+        vm.DraftMailCommand.Execute(null);
+        await WaitForAsync(() => harness.Notifications.WarningMessages.Count == 1);
+
+        Assert.Contains("SMTP offline", harness.Notifications.WarningMessages.Single());
+    }
+
+    [Fact]
+    public void DraftMailCommand_CanExecute_TracksSelectedDocument()
+    {
+        var harness = new MainViewModelHarness();
+        var vm = harness.CreateViewModel();
+
+        Assert.False(vm.DraftMailCommand.CanExecute(null));
+
+        vm.SelectedDocument = new DocumentListItemDto { Id = Guid.NewGuid(), Title = "X", RepositoryPath = "repo/x.pdf" };
+
+        Assert.True(vm.DraftMailCommand.CanExecute(null));
     }
 
     private static async Task WaitForAsync(Func<bool> condition, int timeoutMs = 3000)
@@ -151,11 +196,12 @@ public sealed class MainViewModelCommandTests
     private sealed class FakeMailClientAdapter : IMailClientAdapter
     {
         public MailDraftRequest? LastRequest { get; private set; }
+        public MailDraftResult Result { get; set; } = new() { Success = true };
 
         public Task<MailDraftResult> CreateDraftAsync(MailDraftRequest request, CancellationToken cancellationToken = default)
         {
             LastRequest = request;
-            return Task.FromResult(new MailDraftResult { Success = true });
+            return Task.FromResult(Result);
         }
     }
 

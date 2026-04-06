@@ -35,6 +35,30 @@ public sealed class SqliteMigrationTests
         Assert.Equal(1, documentsTableCount);
     }
 
+    [Fact]
+    public async Task MigrateAsync_IsIdempotent_WhenRunTwice()
+    {
+        using var temp = new TempDirectory();
+        var dbPath = Path.Combine(temp.Path, "db", "app.db");
+
+        var services = new ServiceCollection();
+        services.AddDocuDeskPersistence(dbPath);
+        using var provider = services.BuildServiceProvider();
+        var migrator = provider.GetRequiredService<IDatabaseMigrator>();
+
+        await migrator.MigrateAsync(CancellationToken.None);
+        await migrator.MigrateAsync(CancellationToken.None);
+
+        await using var con = new SqliteConnection($"Data Source={dbPath}");
+        await con.OpenAsync();
+
+        await using var cmd = con.CreateCommand();
+        cmd.CommandText = "SELECT COUNT(*) FROM __schema_migrations;";
+        var migrationCount = Convert.ToInt32(await cmd.ExecuteScalarAsync());
+
+        Assert.True(migrationCount >= 1);
+    }
+
     private sealed class TempDirectory : IDisposable
     {
         public TempDirectory()
