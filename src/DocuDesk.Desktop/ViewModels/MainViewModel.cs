@@ -7,8 +7,8 @@ using DocuDesk.Contracts.Documents;
 using DocuDesk.Contracts.Mail;
 using DocuDesk.Contracts.Viewer;
 using DocuDesk.Desktop.Common;
+using DocuDesk.Desktop.Services;
 using DocuDesk.Worker;
-using Microsoft.Win32;
 
 namespace DocuDesk.Desktop.ViewModels;
 
@@ -21,6 +21,8 @@ public sealed class MainViewModel : ObservableObject
     private readonly IMailClientAdapter _mailClientAdapter;
     private readonly JobScheduler _jobScheduler;
     private readonly IDocumentRepository _documentRepository;
+    private readonly IFileDialogService _fileDialogService;
+    private readonly IUserNotificationService _notificationService;
 
     private string? _searchText;
     private DocumentListItemDto? _selectedDocument;
@@ -32,7 +34,10 @@ public sealed class MainViewModel : ObservableObject
         IBackupService backupService,
         IMailClientAdapter mailClientAdapter,
         JobScheduler jobScheduler,
-        IDocumentRepository documentRepository)
+        IDocumentRepository documentRepository,
+        IFileDialogService fileDialogService,
+        IUserNotificationService notificationService,
+        bool runInitialLoad = true)
     {
         _importService = importService;
         _searchService = searchService;
@@ -40,6 +45,8 @@ public sealed class MainViewModel : ObservableObject
         _mailClientAdapter = mailClientAdapter;
         _jobScheduler = jobScheduler;
         _documentRepository = documentRepository;
+        _fileDialogService = fileDialogService;
+        _notificationService = notificationService;
 
         SearchCommand = new RelayCommand(async () => await LoadDocumentsAsync());
         ImportCommand = new RelayCommand(async () => await ImportAsync());
@@ -50,7 +57,10 @@ public sealed class MainViewModel : ObservableObject
         Documents = new ObservableCollection<DocumentListItemDto>();
         Jobs = new ObservableCollection<JobRecordViewModel>();
 
-        _ = InitializeAsync();
+        if (runInitialLoad)
+        {
+            _ = InitializeAsync();
+        }
     }
 
     public ObservableCollection<DocumentListItemDto> Documents { get; }
@@ -107,19 +117,14 @@ public sealed class MainViewModel : ObservableObject
         }
         catch (Exception ex)
         {
-            System.Windows.Application.Current.Dispatcher.Invoke(() =>
-                MessageBox.Show(
-                    $"Initialdaten konnten nicht geladen werden:\n\n{ex.Message}",
-                    "DocuDesk",
-                    MessageBoxButton.OK,
-                    MessageBoxImage.Warning));
+            _notificationService.ShowWarning($"Initialdaten konnten nicht geladen werden:\n\n{ex.Message}", "DocuDesk");
         }
     }
 
     private async Task LoadDocumentsAsync()
     {
         var items = await _searchService.SearchAsync(new DocumentSearchRequest { SearchText = SearchText });
-        Application.Current.Dispatcher.Invoke(() =>
+        InvokeOnUiThread(() =>
         {
             Documents.Clear();
             foreach (var item in items)
@@ -133,7 +138,7 @@ public sealed class MainViewModel : ObservableObject
     private async Task LoadJobsAsync()
     {
         var jobs = await _jobScheduler.GetLatestJobsAsync();
-        Application.Current.Dispatcher.Invoke(() =>
+        InvokeOnUiThread(() =>
         {
             Jobs.Clear();
             foreach (var job in jobs)
@@ -151,18 +156,13 @@ public sealed class MainViewModel : ObservableObject
 
     private async Task ImportAsync()
     {
-        var dialog = new OpenFileDialog
-        {
-            Multiselect = true,
-            Filter = "Dokumente|*.pdf;*.png;*.jpg;*.jpeg;*.tif;*.tiff;*.txt|Alle Dateien|*.*"
-        };
-
-        if (dialog.ShowDialog() != true)
+        var selectedFiles = _fileDialogService.PickImportFiles();
+        if (selectedFiles.Length == 0)
         {
             return;
         }
 
-        foreach (var fileName in dialog.FileNames)
+        foreach (var fileName in selectedFiles)
         {
             await _importService.ImportAsync(new DocumentImportRequest { FilePath = fileName });
         }
@@ -175,7 +175,7 @@ public sealed class MainViewModel : ObservableObject
     private async Task BackupAsync()
     {
         var backupPath = await _backupService.CreateBackupAsync();
-        MessageBox.Show($"Backup erstellt:\n{backupPath}", "DocuDesk", MessageBoxButton.OK, MessageBoxImage.Information);
+        _notificationService.ShowInfo($"Backup erstellt:\n{backupPath}", "DocuDesk");
     }
 
     private async Task DraftMailAsync()
@@ -194,7 +194,7 @@ public sealed class MainViewModel : ObservableObject
 
         if (!result.Success)
         {
-            MessageBox.Show(result.ErrorText ?? "Mail-Entwurf konnte nicht erzeugt werden.", "DocuDesk", MessageBoxButton.OK, MessageBoxImage.Warning);
+            _notificationService.ShowWarning(result.ErrorText ?? "Mail-Entwurf konnte nicht erzeugt werden.", "DocuDesk");
         }
     }
 
@@ -229,5 +229,15 @@ public sealed class MainViewModel : ObservableObject
         await _documentRepository.SaveAnnotationAsync(SelectedDocument.Id, request);
         await LoadSelectedDocumentOverlayAsync();
     }
-}
 
+    private static void InvokeOnUiThread(Action action)
+    {
+        if (Application.Current?.Dispatcher is { } dispatcher)
+        {
+            dispatcher.Invoke(action);
+            return;
+        }
+
+        action();
+    }
+}

@@ -4,7 +4,8 @@ namespace DocuDesk.Desktop.Common;
 
 public sealed class RelayCommand : ICommand
 {
-    private readonly Action _execute;
+    private readonly Action? _execute;
+    private readonly Func<Task>? _executeAsync;
     private readonly Func<bool>? _canExecute;
 
     public RelayCommand(Action execute, Func<bool>? canExecute = null)
@@ -13,11 +14,44 @@ public sealed class RelayCommand : ICommand
         _canExecute = canExecute;
     }
 
+    public RelayCommand(Func<Task> executeAsync, Func<bool>? canExecute = null)
+    {
+        _executeAsync = executeAsync;
+        _canExecute = canExecute;
+    }
+
     public event EventHandler? CanExecuteChanged;
 
-    public bool CanExecute(object? parameter) => _canExecute?.Invoke() ?? true;
+    public Task? ExecutionTask { get; private set; }
 
-    public void Execute(object? parameter) => _execute();
+    public bool CanExecute(object? parameter)
+        => !IsExecuting && (_canExecute?.Invoke() ?? true);
+
+    public bool IsExecuting => ExecutionTask is { IsCompleted: false };
+
+    public void Execute(object? parameter)
+    {
+        if (_executeAsync is not null)
+        {
+            ExecutionTask = ExecuteAsync();
+            return;
+        }
+
+        _execute?.Invoke();
+    }
+
+    private async Task ExecuteAsync()
+    {
+        RaiseCanExecuteChanged();
+        try
+        {
+            await _executeAsync!();
+        }
+        finally
+        {
+            RaiseCanExecuteChanged();
+        }
+    }
 
     public void RaiseCanExecuteChanged() => CanExecuteChanged?.Invoke(this, EventArgs.Empty);
 }

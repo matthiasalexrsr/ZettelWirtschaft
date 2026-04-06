@@ -7,5 +7,16 @@
              mc:Ignorable="d">
     <Grid>
         <wv2:WebView2 x:Name="PART_WebView" />
+        <Border x:Name="PART_ErrorOverlay"
+                Background="#F9FAFB"
+                BorderBrush="#E5E7EB"
+                BorderThickness="1"
+                Padding="16"
+                Visibility="Collapsed">
+            <TextBlock x:Name="PART_ErrorText"
+                       Text="Viewer konnte nicht initialisiert werden."
+                       Foreground="#374151"
+                       TextWrapping="Wrap" />
+        </Border>
     </Grid>
 </UserControl>
