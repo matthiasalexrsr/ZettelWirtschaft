@@ -9,24 +9,26 @@
         Height="900"
         Width="1500"
         WindowStartupLocation="CenterScreen"
-        Background="#F5F7FA">
+        Background="{DynamicResource Brush.WindowBackground}">
     <Grid>
         <Grid.ColumnDefinitions>
             <ColumnDefinition Width="250" />
             <ColumnDefinition Width="*" />
         </Grid.ColumnDefinitions>
 
-        <Border Grid.Column="0" Background="#1F2937">
+        <Border Grid.Column="0" Background="{StaticResource Brush.SidebarBackground}">
             <StackPanel Margin="20">
                 <TextBlock Text="DocuDesk" Foreground="White" FontSize="28" FontWeight="Bold" />
-                <TextBlock Text="Dokumentenverwaltung" Foreground="#D1D5DB" Margin="0,4,0,24" />
+                <TextBlock Text="Dokumentenverwaltung"
+                           Foreground="{StaticResource Brush.SidebarSubtleText}"
+                           Margin="0,4,0,24" />
 
-                <Button Content="Inbox" Margin="0,0,0,10" Padding="12,8" />
-                <Button Content="Alle Dokumente" Margin="0,0,0,10" Padding="12,8" />
-                <Button Content="Suche" Margin="0,0,0,10" Padding="12,8" />
-                <Button Content="Kategorien" Margin="0,0,0,10" Padding="12,8" />
-                <Button Content="Jobs &amp; Diagnose" Margin="0,0,0,10" Padding="12,8" />
-                <Button Content="Einstellungen" Margin="0,0,0,10" Padding="12,8" />
+                <Button Style="{StaticResource SidebarButtonStyle}" Content="Inbox" />
+                <Button Style="{StaticResource SidebarButtonStyle}" Content="Alle Dokumente" />
+                <Button Style="{StaticResource SidebarButtonStyle}" Content="Suche" />
+                <Button Style="{StaticResource SidebarButtonStyle}" Content="Kategorien" />
+                <Button Style="{StaticResource SidebarButtonStyle}" Content="Jobs &amp; Diagnose" />
+                <Button Style="{StaticResource SidebarButtonStyle}" Content="Einstellungen" />
             </StackPanel>
         </Border>
 
@@ -37,18 +39,22 @@
                 <RowDefinition Height="280" />
             </Grid.RowDefinitions>
 
-            <Border Grid.Row="0" Background="White" CornerRadius="8" Padding="16">
+            <Border Grid.Row="0" Style="{StaticResource CardBorderStyle}" Padding="16">
                 <DockPanel LastChildFill="False">
                     <StackPanel Orientation="Horizontal" DockPanel.Dock="Left">
                         <TextBox Width="420" Height="36" Margin="0,0,12,0" VerticalContentAlignment="Center"
                                  Text="{Binding SearchText, UpdateSourceTrigger=PropertyChanged}" />
-                        <Button Padding="18,8" Content="Suchen" Command="{Binding SearchCommand}" />
+                        <Button Padding="18,8"
+                                Margin="0"
+                                Style="{StaticResource PrimaryButtonStyle}"
+                                Content="Suchen"
+                                Command="{Binding SearchCommand}" />
                     </StackPanel>
                     <StackPanel Orientation="Horizontal" DockPanel.Dock="Right">
-                        <Button Padding="14,8" Content="Import" Command="{Binding ImportCommand}" />
-                        <Button Margin="12,0,0,0" Padding="14,8" Content="Jobs verarbeiten" Command="{Binding ProcessJobsCommand}" />
-                        <Button Margin="12,0,0,0" Padding="14,8" Content="Backup" Command="{Binding BackupCommand}" />
-                        <Button Margin="12,0,0,0" Padding="14,8" Content="Mail-Entwurf" Command="{Binding DraftMailCommand}" />
+                        <Button Style="{StaticResource PrimaryButtonStyle}" Content="Import" Command="{Binding ImportCommand}" />
+                        <Button Style="{StaticResource PrimaryButtonStyle}" Content="Jobs verarbeiten" Command="{Binding ProcessJobsCommand}" />
+                        <Button Style="{StaticResource PrimaryButtonStyle}" Content="Backup" Command="{Binding BackupCommand}" />
+                        <Button Style="{StaticResource PrimaryButtonStyle}" Content="Mail-Entwurf" Command="{Binding DraftMailCommand}" />
                     </StackPanel>
                 </DockPanel>
             </Border>
@@ -60,19 +66,27 @@
                     <ColumnDefinition Width="360" />
                 </Grid.ColumnDefinitions>
 
-                <Border Grid.Column="0" Background="White" CornerRadius="8" Padding="12" Margin="0,0,12,0">
+                <Border Grid.Column="0" Style="{StaticResource CardBorderStyle}" Padding="12" Margin="0,0,12,0">
                     <DockPanel>
-                        <TextBlock DockPanel.Dock="Top" FontSize="18" FontWeight="Bold" Text="Dokumente" />
-                        <ListBox ItemsSource="{Binding Documents}" SelectedItem="{Binding SelectedDocument}" Margin="0,12,0,0">
+                        <StackPanel DockPanel.Dock="Top" Orientation="Horizontal">
+                            <TextBlock Style="{StaticResource SectionHeaderTextStyle}" Text="Dokumente" />
+                            <Border Margin="10,2,0,0" Padding="8,2" CornerRadius="10" Background="#FFEFF6FF">
+                                <TextBlock Text="{Binding Documents.Count, StringFormat={}{0} Treffer}" Foreground="{StaticResource Brush.Primary}" FontSize="12" />
+                            </Border>
+                        </StackPanel>
+                        <ListBox ItemsSource="{Binding Documents}"
+                                 SelectedItem="{Binding SelectedDocument}"
+                                 ItemContainerStyle="{StaticResource DocumentListItemStyle}"
+                                 Margin="0,12,0,0">
                             <ListBox.ItemTemplate>
                                 <DataTemplate>
-                                    <Border Padding="8">
+                                    <Border Padding="10">
                                         <StackPanel>
                                             <TextBlock Text="{Binding Title}" FontWeight="SemiBold" />
-                                            <TextBlock Text="{Binding DisplayName}" Foreground="#6B7280" FontSize="12" />
+                                            <TextBlock Text="{Binding DisplayName}" Foreground="{StaticResource Brush.MutedText}" FontSize="12" />
                                             <TextBlock Text="{Binding ImportedAt}" FontSize="12" />
                                             <TextBlock Text="{Binding OcrStatus}" FontSize="12" Foreground="#2563EB" />
-                                            <TextBlock Text="{Binding MatchSnippet}" Foreground="#374151" FontSize="12" TextWrapping="Wrap" Margin="0,4,0,0" />
+                                            <TextBlock Text="{Binding MatchSnippet}" Foreground="{StaticResource Brush.MutedText}" FontSize="12" TextWrapping="Wrap" Margin="0,4,0,0" />
                                         </StackPanel>
                                     </Border>
                                 </DataTemplate>
@@ -81,33 +95,55 @@
                     </DockPanel>
                 </Border>
 
-                <Border Grid.Column="1" Background="White" CornerRadius="8" Padding="12" Margin="0,0,12,0">
+                <Border Grid.Column="1" Style="{StaticResource CardBorderStyle}" Padding="12" Margin="0,0,12,0">
                     <DockPanel>
-                        <TextBlock DockPanel.Dock="Top" FontSize="18" FontWeight="Bold" Text="Viewer" />
+                        <TextBlock DockPanel.Dock="Top" Style="{StaticResource SectionHeaderTextStyle}" Text="Viewer" />
                         <viewer:ViewerHostControl x:Name="DocumentViewer" Margin="0,12,0,0" SourcePath="{Binding SelectedDocumentPath}" OverlayJson="{Binding SelectedDocumentOverlayJson}" HighlightQuery="{Binding SearchText}" />
                     </DockPanel>
                 </Border>
 
-                <Border Grid.Column="2" Background="White" CornerRadius="8" Padding="12">
-                    <StackPanel>
-                        <TextBlock FontSize="18" FontWeight="Bold" Text="Dokumentdetails" />
-                        <TextBlock Margin="0,12,0,0" Text="Titel" FontWeight="SemiBold" />
-                        <TextBlock Text="{Binding SelectedDocument.Title}" TextWrapping="Wrap" />
-                        <TextBlock Margin="0,12,0,0" Text="Datei" FontWeight="SemiBold" />
-                        <TextBlock Text="{Binding SelectedDocument.DisplayName}" TextWrapping="Wrap" />
-                        <TextBlock Margin="0,12,0,0" Text="Absender" FontWeight="SemiBold" />
-                        <TextBlock Text="{Binding SelectedDocument.Sender}" TextWrapping="Wrap" />
-                        <TextBlock Margin="0,12,0,0" Text="Dokumenttyp" FontWeight="SemiBold" />
-                        <TextBlock Text="{Binding SelectedDocument.DocumentType}" TextWrapping="Wrap" />
-                        <TextBlock Margin="0,12,0,0" Text="Repository-Pfad" FontWeight="SemiBold" />
-                        <TextBlock Text="{Binding SelectedDocument.RepositoryPath}" TextWrapping="Wrap" />
-                    </StackPanel>
+                <Border Grid.Column="2" Style="{StaticResource CardBorderStyle}" Padding="12">
+                    <Grid>
+                        <Grid.RowDefinitions>
+                            <RowDefinition Height="Auto" />
+                            <RowDefinition Height="*" />
+                        </Grid.RowDefinitions>
+                        <TextBlock Style="{StaticResource SectionHeaderTextStyle}" Text="Dokumentdetails" />
+                        <Grid Grid.Row="1" Margin="0,12,0,0">
+                            <Grid.ColumnDefinitions>
+                                <ColumnDefinition Width="120" />
+                                <ColumnDefinition Width="*" />
+                            </Grid.ColumnDefinitions>
+                            <Grid.RowDefinitions>
+                                <RowDefinition Height="Auto" />
+                                <RowDefinition Height="Auto" />
+                                <RowDefinition Height="Auto" />
+                                <RowDefinition Height="Auto" />
+                                <RowDefinition Height="Auto" />
+                            </Grid.RowDefinitions>
+
+                            <TextBlock Grid.Row="0" Grid.Column="0" Text="Titel" FontWeight="SemiBold" Margin="0,0,8,10" />
+                            <TextBlock Grid.Row="0" Grid.Column="1" Text="{Binding SelectedDocument.Title}" TextWrapping="Wrap" Margin="0,0,0,10" />
+
+                            <TextBlock Grid.Row="1" Grid.Column="0" Text="Datei" FontWeight="SemiBold" Margin="0,0,8,10" />
+                            <TextBlock Grid.Row="1" Grid.Column="1" Text="{Binding SelectedDocument.DisplayName}" TextWrapping="Wrap" Margin="0,0,0,10" />
+
+                            <TextBlock Grid.Row="2" Grid.Column="0" Text="Absender" FontWeight="SemiBold" Margin="0,0,8,10" />
+                            <TextBlock Grid.Row="2" Grid.Column="1" Text="{Binding SelectedDocument.Sender}" TextWrapping="Wrap" Margin="0,0,0,10" />
+
+                            <TextBlock Grid.Row="3" Grid.Column="0" Text="Dokumenttyp" FontWeight="SemiBold" Margin="0,0,8,10" />
+                            <TextBlock Grid.Row="3" Grid.Column="1" Text="{Binding SelectedDocument.DocumentType}" TextWrapping="Wrap" Margin="0,0,0,10" />
+
+                            <TextBlock Grid.Row="4" Grid.Column="0" Text="Repository" FontWeight="SemiBold" Margin="0,0,8,0" />
+                            <TextBlock Grid.Row="4" Grid.Column="1" Text="{Binding SelectedDocument.RepositoryPath}" TextWrapping="Wrap" />
+                        </Grid>
+                    </Grid>
                 </Border>
             </Grid>
 
-            <Border Grid.Row="2" Background="White" CornerRadius="8" Padding="12">
+            <Border Grid.Row="2" Style="{StaticResource CardBorderStyle}" Padding="12">
                 <DockPanel>
-                    <TextBlock DockPanel.Dock="Top" FontSize="18" FontWeight="Bold" Text="Jobs &amp; Diagnose" />
+                    <TextBlock DockPanel.Dock="Top" Style="{StaticResource SectionHeaderTextStyle}" Text="Jobs &amp; Diagnose" />
                     <ListBox ItemsSource="{Binding Jobs}" Margin="0,12,0,0">
                         <ListBox.ItemTemplate>
                             <DataTemplate>
