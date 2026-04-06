@@ -68,16 +68,45 @@ public partial class ViewerHostControl : UserControl
             return;
         }
 
-        await PART_WebView.EnsureCoreWebView2Async();
-        PART_WebView.CoreWebView2.WebMessageReceived += OnWebMessageReceived;
-        var assetsPath = Path.Combine(AppContext.BaseDirectory, "viewer-assets");
-        PART_WebView.CoreWebView2.SetVirtualHostNameToFolderMapping(
-            "app.docudesk.viewer",
-            assetsPath,
-            CoreWebView2HostResourceAccessKind.DenyCors);
-        PART_WebView.Source = new Uri("https://app.docudesk.viewer/index.html");
-        _isInitialized = true;
-        await PostOpenMessageAsync();
+        try
+        {
+            await PART_WebView.EnsureCoreWebView2Async();
+            PART_WebView.CoreWebView2.WebMessageReceived += OnWebMessageReceived;
+            var assetsPath = Path.Combine(AppContext.BaseDirectory, "viewer-assets");
+            PART_WebView.CoreWebView2.SetVirtualHostNameToFolderMapping(
+                "app.docudesk.viewer",
+                assetsPath,
+                CoreWebView2HostResourceAccessKind.DenyCors);
+            PART_WebView.Source = new Uri("https://app.docudesk.viewer/index.html");
+            _isInitialized = true;
+            await PostOpenMessageAsync();
+        }
+        catch (Exception ex)
+        {
+            LogViewerInitializationFailure(ex);
+            PART_WebView.Visibility = Visibility.Collapsed;
+            PART_ErrorText.Text = $"Viewer konnte nicht initialisiert werden: {ex.Message}";
+            PART_ErrorOverlay.Visibility = Visibility.Visible;
+        }
+    }
+
+    private static void LogViewerInitializationFailure(Exception ex)
+    {
+        try
+        {
+            var logsDir = Path.Combine(
+                Environment.GetFolderPath(Environment.SpecialFolder.LocalApplicationData),
+                "DocuDesk",
+                "logs");
+            Directory.CreateDirectory(logsDir);
+            var logFile = Path.Combine(logsDir, "viewer-init.log");
+            var entry = $"[{DateTime.UtcNow:O}] [ViewerHostControl.OnLoaded] {ex}\n\n";
+            File.AppendAllText(logFile, entry);
+        }
+        catch
+        {
+            // Logging must never crash UI startup.
+        }
     }
 
     private void OnWebMessageReceived(object? sender, CoreWebView2WebMessageReceivedEventArgs e)
